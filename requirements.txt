@@ -1,0 +1,12 @@
+Flask
+flask-session
+keras
+tensorflow
+numpy
+pillow
+rembg
+sentence-transformers
+scikit-learn
+pypdf
+pickle-mixin
+llama-cpp-python
