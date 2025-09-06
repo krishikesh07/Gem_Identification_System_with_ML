@@ -1,0 +1,162 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0f172a;
+  margin: 0;
+  padding: 0;
+  color: #f8fafc;
+}
+
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #1e293b;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+h1, h3 {
+  text-align: center;
+  color: #f8fafc;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.image-preview {
+  background-color: #334155;
+  border: 2px dashed #475569;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #cbd5e1;
+  font-size: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#uploadBtn {
+  background-color: #334155;
+  color: #f8fafc;
+}
+
+#uploadBtn:hover {
+  background-color: #475569;
+}
+
+#predictBtn {
+  background-color: #14b8a6;
+  color: #ffffff;
+}
+
+#predictBtn:hover {
+  background-color: #0d9488;
+}
+
+#removeBtn {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+#removeBtn:hover {
+  background-color: #dc2626;
+}
+
+.description-box {
+  background-color: #334155;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  color: #f8fafc;
+}
+
+.chatbot {
+  background-color: #334155;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px;
+  color: #f8fafc;
+}
+
+.chat-area {
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 5px;
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #475569;
+  display: flex;
+  flex-direction: column;
+}
+
+.bot-message {
+  background: #4b5563;
+  color: #f8fafc;
+  align-self: flex-start;
+  border-radius: 20px 20px 20px 0;
+  padding: 10px 15px;
+  margin: 5px 0;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.user-message {
+  background: #059669;
+  color: #f8fafc;
+  align-self: flex-end;
+  border-radius: 20px 20px 0 20px;
+  padding: 10px 15px;
+  margin: 5px 0;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.input-container {
+  display: flex;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+#user-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #1e293b;
+  border: 1px solid #475569;
+  color: #f8fafc;
+  border-radius: 20px;
+}
+
+#send-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #14b8a6;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+#send-btn:hover {
+  background-color: #0d9488;
+}

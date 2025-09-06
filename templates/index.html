@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gem Predict System</title>
+  <link rel="stylesheet" href="../static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Gem Predict System</h1>
+
+    <!-- Upload Section -->
+    <div class="upload-section">
+      <input type="file" id="imageUpload" accept="image/*" hidden />
+      <div class="image-preview" id="uploadedImage">Original Image Preview</div>
+      <div class="image-preview" id="croppedImage">Processed Image Preview</div>
+
+      <div class="button-group">
+        <button id="uploadBtn">Upload Image</button>
+        <button id="removeBtn">Remove</button>
+        <button id="predictBtn">Predict</button>
+      </div>
+    </div>
+
+    <!-- Description Box -->
+    <div class="description-box">
+      <h3>Gem Description</h3>
+      <p id="gemDetails">Details will appear here after prediction.</p>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot">
+      <h3>Chat with Gem Expert</h3>
+      <div class="chat-area" id="chatArea"></div>
+      <div class="input-container">
+        <input type="text" id="user-input" placeholder="Type your message here..." />
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+<script>
+const uploadBtn = document.getElementById('uploadBtn');
+const removeBtn = document.getElementById('removeBtn');
+const imageInput = document.getElementById('imageUpload');
+const uploadedImage = document.getElementById('uploadedImage');
+const croppedImage = document.getElementById('croppedImage');
+const predictBtn = document.getElementById('predictBtn');
+const gemDetails = document.getElementById('gemDetails');
+const chatArea = document.getElementById('chatArea');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+
+let processedImageBlob = null;
+let currentGem = null;
+
+function appendMessage(sender, text) {
+  const msg = document.createElement('div');
+  msg.classList.add(sender === 'bot' ? 'bot-message' : 'user-message');
+  msg.textContent = text;
+  chatArea.appendChild(msg);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// Upload button click
+uploadBtn.addEventListener('click', () => imageInput.click());
+
+// Remove/reset
+removeBtn.addEventListener('click', () => {
+  uploadedImage.innerHTML = 'Original Image Preview';
+  croppedImage.innerHTML = 'Processed Image Preview';
+  imageInput.value = '';
+  processedImageBlob = null;
+  gemDetails.innerText = 'Details will appear here after prediction.';
+  chatArea.innerHTML = '';
+  currentGem = null;
+});
+
+// On image select -> auto remove background + show processed preview
+imageInput.addEventListener('change', async () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+
+  // Show original preview
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    uploadedImage.innerHTML = `<img src="${e.target.result}" style="max-height: 100%; max-width: 100%; border-radius: 8px;" />`;
+  };
+  reader.readAsDataURL(file);
+
+  // Send to /process for background removal
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const res = await fetch("/process", { method: "POST", body: formData });
+    const data = await res.json();
+
+    if (data.error) {
+      croppedImage.innerHTML = "❌ Error: " + data.error;
+      processedImageBlob = null;
+      return;
+    }
+
+    // Show processed preview
+    croppedImage.innerHTML = `<img src="${data.image}" style="max-height: 100%; max-width: 100%; border-radius: 8px;" />`;
+
+    // Convert base64 to Blob for prediction
+    const base64Response = await fetch(data.image);
+    processedImageBlob = await base64Response.blob();
+
+  } catch (err) {
+    croppedImage.innerHTML = "❌ Failed to process image.";
+    processedImageBlob = null;
+  }
+});
+
+// Predict using processed image
+predictBtn.addEventListener('click', async () => {
+  if (!processedImageBlob) {
+    alert("Please upload and process an image first.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", processedImageBlob, "processed.png");
+  gemDetails.innerText = "Predicting...";
+
+  try {
+    const res = await fetch('/predict', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    if (data.error) {
+      gemDetails.innerText = "Error: " + data.error;
+    } else {
+      gemDetails.innerText = `Gem Name: ${data.gem_name}\nGem Shape: ${data.gem_shape}`;
+      currentGem = data.gem_name;
+      chatArea.innerHTML = '';
+      appendMessage('bot', `Hello! Ask whatever question about ${data.gem_name} stone.`);
+    }
+  } catch (err) {
+    gemDetails.innerText = "Prediction failed: " + err.message;
+  }
+});
+
+// Chatbot
+sendBtn.addEventListener('click', async () => {
+  const message = userInput.value.trim();
+  if (!message || !currentGem) {
+    if (!currentGem) alert('Please predict a gem first.');
+    return;
+  }
+  appendMessage('user', message);
+  userInput.value = '';
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message, gem_name: currentGem})
+    });
+    const data = await res.json();
+    appendMessage('bot', data.reply);
+  } catch (err) {
+    appendMessage('bot', 'Error: ' + err.message);
+  }
+});
+
+userInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') sendBtn.click();
+});
+</script>
+</body>
+</html>
