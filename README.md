@@ -95,6 +95,7 @@ Models Used
 Custom CNN Models (Keras/TensorFlow)
 name.h5 → Gemstone classification.
 shape.h5 → Gemstone shape detection.
+https://drive.google.com/file/d/1ewKwi8HsfW9iZaUQ3mk_J2k_3UnjcnfN/view?usp=drive_link - Modelels have been upload to the follwing google drive 
 
 Pre-trained Embedding Model
 all-MiniLM-L6-v2 (Sentence Transformers) for semantic similarity search.
